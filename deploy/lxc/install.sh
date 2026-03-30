@@ -79,6 +79,11 @@ error_handler() {
 check_proxmox() {
   command -v pct &>/dev/null || { msg_error "This script must run on a Proxmox VE host."; exit 1; }
   [[ $EUID -ne 0 ]] && { msg_error "Run as root."; exit 1; }
+  if ! command -v whiptail &>/dev/null; then
+    echo -ne "${TAB}${YW}⠋${CL} Installing whiptail..."
+    apt-get install -y whiptail > /dev/null 2>&1
+    echo -e "${BFR}${CM}${GN}whiptail installed${CL}"
+  fi
 }
 
 # ==============================================================================
