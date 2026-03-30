@@ -14,6 +14,13 @@
     "status": "online"
   },
   {
+    "category": "services",
+    "name": "Scramjet",
+    "description": "Web proxy service available at scramjet.excrementgaming.com.",
+    "url": "https://scramjet.excrementgaming.com",
+    "status": "online"
+  },
+  {
     "category": "projects",
     "name": "Railtrax",
     "description": "Railway-focused site for railtrax.eu.",
