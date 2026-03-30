@@ -47,10 +47,17 @@
 ██╔══╝   ██╔██╗ ██║     ██╔══██╗██╔══╝  ██║╚██╔╝██║██╔══╝  ██║╚██╗██║   ██║
 ███████╗██╔╝ ██╗╚██████╗██║  ██║███████╗██║ ╚═╝ ██║███████╗██║ ╚████║   ██║
 ╚══════╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═══╝   ╚═╝
+                                                                            
+ ██████╗  █████╗ ███╗   ███╗██╗███╗   ██╗ ██████╗                            
+██╔════╝ ██╔══██╗████╗ ████║██║████╗  ██║██╔════╝                            
+██║  ███╗███████║██╔████╔██║██║██╔██╗ ██║██║  ███╗                           
+██║   ██║██╔══██║██║╚██╔╝██║██║██║╚██╗██║██║   ██║                           
+╚██████╔╝██║  ██║██║ ╚═╝ ██║██║██║ ╚████║╚██████╔╝                           
+ ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝                            
         </pre>
 
         <div class="hero-grid">
-          <section class="card intro-card" id="about">
+          <section class="card intro-card hero-wide" id="about">
             <div class="card-title">readme.txt</div>
             <p>
               Self-hosted tools, personal infrastructure, and internet side-projects running on a small stack
@@ -60,16 +67,12 @@
               This page is the front desk. The blog is where the logs, experiments, and breakdowns live.
             </p>
           </section>
-
-          <section class="card status-card">
-            <div class="card-title">node_status.sh</div>
-            <ul class="status-list">
-              <li><span>stack</span><strong>proxmox / lxc / nginx</strong></li>
-              <li><span>routing</span><strong>cloudflare tunnel</strong></li>
-              <li><span>theme</span><strong>amber console / steel frame</strong></li>
-              <li><span>blog</span><a href="https://blog.excrementgaming.com">blog.excrementgaming.com</a></li>
-            </ul>
-          </section>
+          <div class="hero-meta">
+            <span class="meta-pill">proxmox / lxc / nginx</span>
+            <span class="meta-pill">cloudflare tunnel</span>
+            <span class="meta-pill">amber console / steel frame</span>
+            <a class="meta-pill" href="https://blog.excrementgaming.com">blog.excrementgaming.com</a>
+          </div>
         </div>
       </section>
 
@@ -97,65 +100,27 @@
               <p class="muted">Loading…</p>
             </div>
           </div>
-
-          <aside class="card side-shell">
-            <div class="card-title">notes.sys</div>
-            <div class="note-box">
-              <strong>What this is:</strong>
-              <p>Small, useful tools that are actually used, not filler apps deployed just to look busy.</p>
-            </div>
-            <div class="note-box">
-              <strong>Main companion page:</strong>
-              <p><a href="https://blog.excrementgaming.com">Open the blog</a> for writeups, setup notes, and experiments.</p>
-            </div>
-            <div class="note-box accent-box">
-              <strong>Operating principle:</strong>
-              <p>Own the stack, understand the stack, document the stack.</p>
-            </div>
-          </aside>
         </div>
       </section>
 
-      <section class="window-section split-layout">
-        <div>
-          <div class="section-head">
-            <span class="prompt-user">visitor@excrementgaming</span>
-            <span class="prompt-sep">:</span>
-            <span class="prompt-path">~/about</span>
-            <span class="prompt-sep">$</span>
-            <span class="prompt-command">cat principles.md</span>
-          </div>
-
-          <div class="card prose-card">
-            <p>
-              excrementgaming.com is meant to feel personal and operational at the same time: a place where
-              services are live, the design has a point of view, and the infrastructure behind it is part of the story.
-            </p>
-            <p>
-              The look leans into warm monitor glow and industrial framing instead of playful desktop imitation.
-            </p>
-          </div>
+      <section class="window-section" id="links">
+        <div class="section-head">
+          <span class="prompt-user">visitor@excrementgaming</span>
+          <span class="prompt-sep">:</span>
+          <span class="prompt-path">~/links</span>
+          <span class="prompt-sep">$</span>
+          <span class="prompt-command">open destinations.list</span>
         </div>
 
-        <div id="links">
-          <div class="section-head">
-            <span class="prompt-user">visitor@excrementgaming</span>
-            <span class="prompt-sep">:</span>
-            <span class="prompt-path">~/links</span>
-            <span class="prompt-sep">$</span>
-            <span class="prompt-command">open destinations.list</span>
-          </div>
-
-          <div class="card links-card">
-            <a class="link-row" href="https://blog.excrementgaming.com">
-              <span>blog.excrementgaming.com</span>
-              <strong>notes, posts, logs →</strong>
-            </a>
-            <a class="link-row" href="#services">
-              <span>services</span>
-              <strong>currently running tools →</strong>
-            </a>
-          </div>
+        <div class="card links-card">
+          <a class="link-row" href="https://blog.excrementgaming.com">
+            <span>blog.excrementgaming.com</span>
+            <strong>notes, posts, logs →</strong>
+          </a>
+          <a class="link-row" href="#services">
+            <span>services</span>
+            <strong>currently running tools →</strong>
+          </a>
         </div>
       </section>
 
