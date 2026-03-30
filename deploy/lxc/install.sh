@@ -6,19 +6,17 @@
 # Run on the Proxmox host:
 #   bash <(curl -fsSL https://raw.githubusercontent.com/juliuskolosnjaji/excrementgaming-landing/main/deploy/lxc/install.sh)
 
-set -Eeuo pipefail
+set -euo pipefail
 
 # ==============================================================================
 # Colors & Formatting
 # ==============================================================================
 
 YW=$'\033[33m'
-YWB=$'\033[93m'
 BL=$'\033[36m'
 RD=$'\033[01;31m'
 BGN=$'\033[4;92m'
 GN=$'\033[1;92m'
-DGN=$'\033[32m'
 CL=$'\033[m'
 BOLD=$'\033[1m'
 BFR="\\r\\033[K"
@@ -33,8 +31,12 @@ CONTAINERID="${TAB}🆔${TAB}"
 CLOUD="${TAB}☁️ ${TAB}"
 
 # ==============================================================================
-# Header
+# Helpers
 # ==============================================================================
+
+msg_info()  { echo -ne "${TAB}${YW}⠋${CL} ${1}..."; }
+msg_ok()    { echo -e "${BFR}${CM}${GN}${1}${CL}"; }
+msg_error() { echo -e "${BFR}${CROSS}${RD}${1}${CL}"; }
 
 header_info() {
   clear
@@ -47,143 +49,36 @@ header_info() {
                                                    |___/                           |___/
 
 EOF
-  echo -e "${DGN}    Landing Page — LXC Install${CL}   ${YW}github.com/juliuskolosnjaji/excrementgaming-landing${CL}"
+  echo -e "${GN}    Landing Page — LXC Install${CL}   ${YW}github.com/juliuskolosnjaji/excrementgaming-landing${CL}"
   echo -e "    ${BL}────────────────────────────────────────────────────────────────────────────${CL}"
   echo ""
 }
 
-# ==============================================================================
-# Helpers
-# ==============================================================================
-
-msg_info()  { local msg="$1"; echo -ne "${TAB}${YW}⠋${CL} ${msg}..."; }
-msg_ok()    { local msg="$1"; echo -e "${BFR}${CM}${GN}${msg}${CL}"; }
-msg_error() { local msg="$1"; echo -e "${BFR}${CROSS}${RD}${msg}${CL}"; }
-
-catch_errors() {
-  set -Eeuo pipefail
-  trap 'error_handler $LINENO "$BASH_COMMAND"' ERR
+next_id() {
+  local id=100
+  while pct status "$id" &>/dev/null 2>&1; do id=$((id + 1)); done
+  echo "$id"
 }
 
-error_handler() {
-  local line="$1" cmd="$2"
-  msg_error "Error on line ${line}: ${cmd}"
-  if [[ -n "${CT_ID:-}" ]] && pct status "$CT_ID" &>/dev/null; then
-    echo -e "\n${INFO}${YW}Container CT${CT_ID} may be in an incomplete state.${CL}"
-    read -rp "${TAB}Remove CT${CT_ID}? [y/N]: " yn
-    [[ "${yn,,}" == "y" ]] && { pct stop "$CT_ID" 2>/dev/null || true; pct destroy "$CT_ID" --purge 2>/dev/null || true; msg_ok "Removed CT${CT_ID}"; }
-  fi
-  exit 1
+first_storage_for_content() {
+  local content="$1"
+  pvesm status -content "$content" 2>/dev/null | awk 'NR>1 {print $1; exit}'
 }
 
-check_proxmox() {
-  command -v pct &>/dev/null || { msg_error "This script must run on a Proxmox VE host."; exit 1; }
-  [[ $EUID -ne 0 ]] && { msg_error "Run as root."; exit 1; }
-  if ! command -v whiptail &>/dev/null; then
-    echo -ne "${TAB}${YW}⠋${CL} Installing whiptail..."
-    apt-get install -y whiptail > /dev/null 2>&1
-    echo -e "${BFR}${CM}${GN}whiptail installed${CL}"
-  fi
+first_bridge() {
+  ip link show 2>/dev/null | awk '/^[0-9]+: vmbr/{gsub(":",""); print $2; exit}'
 }
 
 # ==============================================================================
-# Defaults
+# Cloudflare helper — defined before use
 # ==============================================================================
 
-APP="excrementgaming Landing"
-NSAPP="excrementgaming"
-REPO="https://github.com/juliuskolosnjaji/excrementgaming-landing.git"
-GITHUB_RAW="https://raw.githubusercontent.com/juliuskolosnjaji/excrementgaming-landing/main/deploy/lxc"
-WEB_ROOT="/var/www/excrementgaming"
-SERVICE_NAME="nginx"
-
-var_ram="256"
-var_disk="2"
-
-# ==============================================================================
-# Main
-# ==============================================================================
-
-header_info
-check_proxmox
-catch_errors
-
-# ── Detect existing installation ──────────────────────────────────────────────
-EXISTING_CT=""
-for id in $(pct list 2>/dev/null | awk 'NR>1 {print $1}'); do
-  if pct exec "$id" -- test -d "$WEB_ROOT" 2>/dev/null; then
-    EXISTING_CT="$id"
-    break
-  fi
-done
-
-# ── Mode selection ────────────────────────────────────────────────────────────
-if [[ -n "$EXISTING_CT" ]]; then
-  CT_HOSTNAME=$(pct config "$EXISTING_CT" | grep "^hostname:" | awk '{print $2}')
-  CT_STATUS=$(pct status "$EXISTING_CT" | awk '{print $2}')
-
-  echo -e "${INFO}${YW}Found existing install in CT${EXISTING_CT} (${CT_HOSTNAME}, ${CT_STATUS})${CL}\n"
-
-  ACTION=$(whiptail --backtitle "excrementgaming Landing" \
-    --title "Existing Installation Detected" \
-    --menu "\nWhat would you like to do?" 14 60 3 \
-    "1" "Update site in CT${EXISTING_CT}" \
-    "2" "Manage Cloudflare Tunnel in CT${EXISTING_CT}" \
-    "3" "Create a new container" \
-    3>&1 1>&2 2>&3) || { echo -e "\n${INFO}${YW}Cancelled.${CL}"; exit 0; }
-else
-  ACTION="new"
-fi
-
-# ==============================================================================
-# UPDATE
-# ==============================================================================
-if [[ "$ACTION" == "1" ]]; then
-  header_info
-  CT_ID="$EXISTING_CT"
-  [[ "$(pct status "$CT_ID" | awk '{print $2}')" != "running" ]] && { msg_info "Starting CT${CT_ID}"; pct start "$CT_ID"; sleep 3; msg_ok "Started CT${CT_ID}"; }
-
-  msg_info "Pulling latest from GitHub"
-  pct exec "$CT_ID" -- bash -c "
-    cd /opt/excrementgaming-landing
-    git fetch --quiet origin main
-    BEFORE=\$(git rev-parse HEAD)
-    git reset --hard origin/main --quiet
-    AFTER=\$(git rev-parse HEAD)
-    rsync -a --delete --exclude='.git' /opt/excrementgaming-landing/ $WEB_ROOT/
-    nginx -t 2>/dev/null && systemctl reload nginx
-    echo \"\$BEFORE \$AFTER\"
-  " > /tmp/excg_update_out 2>&1
-
-  RESULT=$(cat /tmp/excg_update_out | tail -1)
-  BEFORE=$(echo "$RESULT" | awk '{print $1}' | cut -c1-7)
-  AFTER=$(echo "$RESULT" | awk '{print $2}' | cut -c1-7)
-  [[ "$BEFORE" == "$AFTER" ]] && msg_ok "Already up to date" || msg_ok "Updated ${BEFORE} → ${AFTER}"
-
-  CT_IP=$(pct exec "$CT_ID" -- hostname -I 2>/dev/null | awk '{print $1}' || echo "unknown")
-  echo -e "\n${CM}${GN}Update complete!${CL}"
-  echo -e "${GATEWAY}${BGN}http://${CT_IP}${CL}\n"
-  exit 0
-fi
-
-# ==============================================================================
-# CLOUDFLARE management
-# ==============================================================================
-if [[ "$ACTION" == "2" ]]; then
-  header_info
-  CT_ID="$EXISTING_CT"
-  [[ "$(pct status "$CT_ID" | awk '{print $2}')" != "running" ]] && { msg_info "Starting CT${CT_ID}"; pct start "$CT_ID"; sleep 3; msg_ok "Started"; }
-  _manage_cloudflare "$CT_ID"
-  exit 0
-fi
-
-# ==============================================================================
-# Cloudflare helper
-# ==============================================================================
 _manage_cloudflare() {
   local ct="$1"
+  local CF_RUNNING
   CF_RUNNING=$(pct exec "$ct" -- bash -c "command -v cloudflared &>/dev/null && systemctl is-active --quiet cloudflared && echo yes || echo no" 2>/dev/null || echo "no")
 
+  local CF_ACTION
   if [[ "$CF_RUNNING" == "yes" ]]; then
     CF_ACTION=$(whiptail --backtitle "excrementgaming Landing" \
       --title "Cloudflare Tunnel" \
@@ -205,6 +100,7 @@ _manage_cloudflare() {
 
   case "$CF_ACTION" in
     2)
+      local CF_TOKEN
       CF_TOKEN=$(whiptail --backtitle "excrementgaming Landing" \
         --title "Cloudflare Tunnel Token" \
         --inputbox "\nPaste your tunnel token.\n\nGet it at:\n  dash.cloudflare.com → Zero Trust\n  → Networks → Tunnels → Create\n" \
@@ -224,20 +120,130 @@ _manage_cloudflare() {
 }
 
 # ==============================================================================
-# NEW container
+# Defaults
 # ==============================================================================
+
+APP="excrementgaming Landing"
+NSAPP="excrementgaming"
+GITHUB_RAW="https://raw.githubusercontent.com/juliuskolosnjaji/excrementgaming-landing/main/deploy/lxc"
+WEB_ROOT="/var/www/excrementgaming"
+
+var_ram="256"
+var_disk="2"
+
+# ==============================================================================
+# Preflight
+# ==============================================================================
+
 header_info
 
-if (whiptail --backtitle "excrementgaming Landing" \
+command -v pct &>/dev/null  || { msg_error "This script must run on a Proxmox VE host."; exit 1; }
+[[ $EUID -ne 0 ]]           && { msg_error "Run as root."; exit 1; }
+
+if ! command -v whiptail &>/dev/null; then
+  msg_info "Installing whiptail"
+  apt-get install -y whiptail > /dev/null 2>&1
+  msg_ok "whiptail installed"
+fi
+
+# ==============================================================================
+# Detect existing installation (safe — no set -e yet)
+# ==============================================================================
+
+EXISTING_CT=""
+while IFS= read -r id; do
+  [[ -z "$id" ]] && continue
+  if pct exec "$id" -- test -d "$WEB_ROOT" 2>/dev/null; then
+    EXISTING_CT="$id"
+    break
+  fi
+done < <(pct list 2>/dev/null | awk 'NR>1 {print $1}')
+
+# ==============================================================================
+# Mode selection
+# ==============================================================================
+
+ACTION="new"
+
+if [[ -n "$EXISTING_CT" ]]; then
+  CT_HOSTNAME=$(pct config "$EXISTING_CT" | awk '/^hostname:/{print $2}')
+  CT_STATUS=$(pct status "$EXISTING_CT" | awk '{print $2}')
+  echo -e "${INFO}${YW}Found existing install in CT${EXISTING_CT} (${CT_HOSTNAME}, ${CT_STATUS})${CL}\n"
+
+  ACTION=$(whiptail --backtitle "excrementgaming Landing" \
+    --title "Existing Installation Detected" \
+    --menu "\nWhat would you like to do?" 14 60 3 \
+    "1" "Update site in CT${EXISTING_CT}" \
+    "2" "Manage Cloudflare Tunnel in CT${EXISTING_CT}" \
+    "3" "Create a new container" \
+    3>&1 1>&2 2>&3) || { echo -e "\n${INFO}${YW}Cancelled.${CL}"; exit 0; }
+fi
+
+# From here, enable strict error handling
+set -Eeuo pipefail
+trap 'echo -e "\n${CROSS}${RD}Error on line ${LINENO}. Aborted.${CL}"' ERR
+
+# ==============================================================================
+# UPDATE existing container
+# ==============================================================================
+
+if [[ "$ACTION" == "1" ]]; then
+  header_info
+  CT_ID="$EXISTING_CT"
+  if [[ "$(pct status "$CT_ID" | awk '{print $2}')" != "running" ]]; then
+    msg_info "Starting CT${CT_ID}"; pct start "$CT_ID"; sleep 3; msg_ok "Started CT${CT_ID}"
+  fi
+
+  msg_info "Pulling latest from GitHub"
+  pct exec "$CT_ID" -- bash -c "
+    cd /opt/excrementgaming-landing
+    git fetch --quiet origin main
+    BEFORE=\$(git rev-parse HEAD)
+    git reset --hard origin/main --quiet
+    AFTER=\$(git rev-parse HEAD)
+    rsync -a --delete --exclude='.git' /opt/excrementgaming-landing/ $WEB_ROOT/
+    nginx -t 2>/dev/null && systemctl reload nginx
+    echo \"\${BEFORE:0:7} \${AFTER:0:7}\"
+  " > /tmp/excg_update_out 2>&1 || true
+
+  read -r BEFORE AFTER < /tmp/excg_update_out || true
+  [[ "$BEFORE" == "$AFTER" ]] && msg_ok "Already up to date" || msg_ok "Updated ${BEFORE} → ${AFTER}"
+
+  CT_IP=$(pct exec "$CT_ID" -- hostname -I 2>/dev/null | awk '{print $1}' || echo "unknown")
+  echo -e "\n${CM}${GN}Update complete!${CL}"
+  echo -e "${GATEWAY}${BGN}http://${CT_IP}${CL}\n"
+  exit 0
+fi
+
+# ==============================================================================
+# CLOUDFLARE management only
+# ==============================================================================
+
+if [[ "$ACTION" == "2" ]]; then
+  header_info
+  CT_ID="$EXISTING_CT"
+  if [[ "$(pct status "$CT_ID" | awk '{print $2}')" != "running" ]]; then
+    msg_info "Starting CT${CT_ID}"; pct start "$CT_ID"; sleep 3; msg_ok "Started"
+  fi
+  _manage_cloudflare "$CT_ID"
+  exit 0
+fi
+
+# ==============================================================================
+# NEW container
+# ==============================================================================
+
+header_info
+
+if whiptail --backtitle "excrementgaming Landing" \
   --title "Settings" \
   --yesno "Use default settings?\n\n  RAM:   ${var_ram} MB\n  Disk:  ${var_disk} GB\n  OS:    Debian 12\n  Type:  Unprivileged" \
-  13 50); then
+  13 50 3>&1 1>&2 2>&3; then
   SETTINGS="default"
 else
   SETTINGS="advanced"
 fi
 
-next_id() { local id=100; while pct status "$id" &>/dev/null 2>&1; do id=$((id+1)); done; echo "$id"; }
 DEFAULT_CTID=$(next_id)
 
 if [[ "$SETTINGS" == "advanced" ]]; then
@@ -260,9 +266,9 @@ if [[ "$SETTINGS" == "advanced" ]]; then
 
   STORAGE_LIST=$(pvesm status -content rootdir 2>/dev/null | awk 'NR>1 {print $1 " " $1}')
   CT_STORAGE=$(whiptail --backtitle "excrementgaming Landing" --title "Storage" \
-    --menu "\nSelect storage:" 14 50 4 $STORAGE_LIST 3>&1 1>&2 2>&3) || exit 0
+    --menu "\nSelect storage:" 14 50 6 $STORAGE_LIST 3>&1 1>&2 2>&3) || exit 0
 
-  BRIDGE_LIST=$(ip link show | awk '/^[0-9]+: vmbr/{gsub(":",""); print $2 " " $2}')
+  BRIDGE_LIST=$(ip link show 2>/dev/null | awk '/^[0-9]+: vmbr/{gsub(":",""); print $2 " " $2}')
   CT_BRIDGE=$(whiptail --backtitle "excrementgaming Landing" --title "Bridge" \
     --menu "\nSelect bridge:" 13 50 4 $BRIDGE_LIST 3>&1 1>&2 2>&3) || exit 0
 else
@@ -272,7 +278,8 @@ else
   CT_DISK="$var_disk"
   CT_STORAGE=$(pvesm status -content rootdir 2>/dev/null | awk 'NR==2 {print $1}')
   CT_STORAGE="${CT_STORAGE:-local-lvm}"
-  CT_BRIDGE="vmbr0"
+  CT_BRIDGE=$(first_bridge)
+  CT_BRIDGE="${CT_BRIDGE:-vmbr0}"
 fi
 
 CT_PW=$(whiptail --backtitle "excrementgaming Landing" --title "Root Password" \
@@ -280,24 +287,28 @@ CT_PW=$(whiptail --backtitle "excrementgaming Landing" --title "Root Password" \
 
 whiptail --backtitle "excrementgaming Landing" --title "Confirm" \
   --yesno "\n  CT ID:    ${CT_ID}\n  Hostname: ${CT_HOSTNAME}\n  RAM:      ${CT_RAM} MB\n  Disk:     ${CT_DISK} GB\n  Storage:  ${CT_STORAGE}\n  Bridge:   ${CT_BRIDGE}\n\nProceed?" \
-  16 50 || { echo -e "\n${INFO}${YW}Cancelled.${CL}"; exit 0; }
+  16 50 3>&1 1>&2 2>&3 || { echo -e "\n${INFO}${YW}Cancelled.${CL}"; exit 0; }
 
 # ── Build ─────────────────────────────────────────────────────────────────────
 header_info
 echo -e "${CREATING}${GN}Creating CT${CT_ID} (${CT_HOSTNAME})${CL}\n"
 
 msg_info "Checking Debian 12 template"
-TEMPLATE=$(pveam list local 2>/dev/null | grep -i "debian-12" | head -1 | awk '{print $1}')
+TEMPLATE_STORAGE=$(first_storage_for_content vztmpl)
+TEMPLATE_STORAGE="${TEMPLATE_STORAGE:-local}"
+TEMPLATE=$(pveam list "$TEMPLATE_STORAGE" 2>/dev/null | grep -i "debian-12" | head -1 | awk '{print $1}')
 if [[ -z "$TEMPLATE" ]]; then
   pveam update > /dev/null 2>&1
   TEMPLATE_NAME=$(pveam available --section system 2>/dev/null | grep -i "debian-12" | head -1 | awk '{print $2}')
   [[ -z "$TEMPLATE_NAME" ]] && { msg_error "Debian 12 template not found."; exit 1; }
-  pveam download local "$TEMPLATE_NAME" > /dev/null 2>&1
-  TEMPLATE="local:vztmpl/$TEMPLATE_NAME"
+  pveam download "$TEMPLATE_STORAGE" "$TEMPLATE_NAME" > /dev/null 2>&1
+  TEMPLATE="${TEMPLATE_STORAGE}:vztmpl/$TEMPLATE_NAME"
 fi
 msg_ok "Template ready"
 
 msg_info "Creating container"
+[[ -n "$CT_STORAGE" ]] || { msg_error "No Proxmox storage with rootdir content available."; exit 1; }
+[[ -n "$CT_BRIDGE" ]] || { msg_error "No Proxmox bridge found. Create a vmbr bridge first."; exit 1; }
 PCT_ARGS=(
   "$CT_ID" "$TEMPLATE"
   --hostname "$CT_HOSTNAME"
@@ -312,7 +323,14 @@ PCT_ARGS=(
   --start 1
 )
 [[ -n "$CT_PW" ]] && PCT_ARGS+=(--password "$CT_PW")
-pct create "${PCT_ARGS[@]}" > /dev/null 2>&1
+PCT_CREATE_ERR=$(mktemp)
+if ! pct create "${PCT_ARGS[@]}" > /dev/null 2>"$PCT_CREATE_ERR"; then
+  msg_error "Container creation failed"
+  sed 's/^/      /' "$PCT_CREATE_ERR" >&2
+  rm -f "$PCT_CREATE_ERR"
+  exit 1
+fi
+rm -f "$PCT_CREATE_ERR"
 msg_ok "Container CT${CT_ID} created"
 
 msg_info "Waiting for network"
@@ -324,7 +342,7 @@ msg_ok "Network ready"
 msg_info "Installing nginx and git"
 pct exec "$CT_ID" -- bash -c "
   apt-get update -qq
-  apt-get install -y --no-install-recommends nginx git curl > /dev/null
+  apt-get install -y --no-install-recommends nginx git curl rsync > /dev/null
   systemctl enable nginx > /dev/null
 " > /dev/null 2>&1
 msg_ok "nginx installed"
