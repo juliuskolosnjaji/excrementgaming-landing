@@ -23,7 +23,11 @@
           <a href="#links">links</a>
         </span>
       </div>
-      <button class="close-button" type="button" aria-label="Decorative window close button">×</button>
+      <div class="signal-cluster" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
     </header>
 
     <main class="terminal-window">
@@ -33,7 +37,7 @@
           <span class="prompt-sep">:</span>
           <span class="prompt-path">~</span>
           <span class="prompt-sep">$</span>
-          <span class="prompt-command">./launch-main-site --mode self-hosted</span>
+          <span class="prompt-command">render site --profile amber-console</span>
         </div>
 
         <pre class="hero-logo" aria-label="excrementgaming logo">
@@ -62,7 +66,7 @@
             <ul class="status-list">
               <li><span>stack</span><strong>proxmox / lxc / nginx</strong></li>
               <li><span>routing</span><strong>cloudflare tunnel</strong></li>
-              <li><span>policy</span><strong>no ads / no tracking</strong></li>
+              <li><span>theme</span><strong>amber console / steel frame</strong></li>
               <li><span>blog</span><a href="https://blog.excrementgaming.com">blog.excrementgaming.com</a></li>
             </ul>
           </section>
@@ -70,10 +74,10 @@
       </section>
 
       <section class="desktop-strip" aria-label="Quick navigation">
-        <a class="desktop-chip is-active" href="/">main-site.exe</a>
-        <a class="desktop-chip" href="https://blog.excrementgaming.com">blog.exe</a>
-        <a class="desktop-chip" href="#services">services.log</a>
-        <a class="desktop-chip" href="#links">links.cfg</a>
+        <a class="desktop-chip is-active" href="/">website</a>
+        <a class="desktop-chip" href="https://blog.excrementgaming.com">blog</a>
+        <a class="desktop-chip" href="#services">services</a>
+        <a class="desktop-chip" href="#links">links</a>
       </section>
 
       <section class="window-section" id="services">
@@ -128,8 +132,7 @@
               services are live, the design has a point of view, and the infrastructure behind it is part of the story.
             </p>
             <p>
-              The look intentionally leans into terminal windows, desktop chrome, and old-web personality,
-              but it still behaves like a modern landing page.
+              The look leans into warm monitor glow and industrial framing instead of playful desktop imitation.
             </p>
           </div>
         </div>
