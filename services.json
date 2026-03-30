@@ -10,5 +10,11 @@
     "description": "Download YouTube videos as MP4 or extract MP3 audio.",
     "url": "https://ytdownload.excrementgaming.com",
     "status": "online"
+  },
+  {
+    "name": "Railtrax",
+    "description": "Railway-focused site for railtrax.eu.",
+    "url": "https://railtrax.eu",
+    "status": "online"
   }
 ]
