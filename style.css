@@ -358,11 +358,14 @@ a:visited {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
+  align-items: start;
 }
 
 .host-group {
   display: grid;
   gap: 14px;
+  align-content: start;
+  align-items: start;
 }
 
 .host-group-title {
@@ -376,6 +379,7 @@ a:visited {
 .host-table {
   display: grid;
   gap: 14px;
+  align-content: start;
 }
 
 .service-item {
