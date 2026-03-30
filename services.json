@@ -1,20 +1,30 @@
 [
   {
+    "category": "services",
     "name": "Pastebin",
     "description": "Share code and text snippets. Syntax highlighted, no account needed.",
     "url": "https://bin.excrementgaming.com",
     "status": "online"
   },
   {
+    "category": "services",
     "name": "YouTube Downloader",
     "description": "Download YouTube videos as MP4 or extract MP3 audio.",
     "url": "https://ytdownload.excrementgaming.com",
     "status": "online"
   },
   {
+    "category": "projects",
     "name": "Railtrax",
     "description": "Railway-focused site for railtrax.eu.",
     "url": "https://railtrax.eu",
+    "status": "online"
+  },
+  {
+    "category": "projects",
+    "name": "Wassertracker",
+    "description": "Hydration tracking site for wassertracker.xyz.",
+    "url": "https://wassertracker.xyz",
     "status": "online"
   }
 ]

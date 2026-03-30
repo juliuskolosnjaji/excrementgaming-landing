@@ -291,6 +291,19 @@ a:visited {
   margin-top: 16px;
 }
 
+.host-group {
+  display: grid;
+  gap: 14px;
+}
+
+.host-group-title {
+  margin: 8px 0 0;
+  color: var(--accent);
+  font: 700 1rem/1.2 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .service-item {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
