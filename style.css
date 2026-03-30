@@ -37,6 +37,15 @@ body {
   position: relative;
 }
 
+body.window-dismissed #page-shell,
+body.window-dismissed .blog-toast {
+  display: none;
+}
+
+body.window-dismissed .window-fallback {
+  display: grid;
+}
+
 .blog-toast {
   position: fixed;
   right: 22px;
@@ -217,12 +226,39 @@ a:visited {
   gap: 6px;
 }
 
-.signal-cluster span {
+.window-button {
   width: 11px;
   height: 11px;
+  padding: 0;
   border: 1px solid rgba(255, 191, 105, 0.45);
+  border-radius: 999px;
   background: linear-gradient(180deg, rgba(255, 191, 105, 0.48), rgba(255, 157, 46, 0.14));
   box-shadow: 0 0 12px rgba(255, 157, 46, 0.1);
+  cursor: pointer;
+}
+
+.window-button.is-close {
+  background: linear-gradient(180deg, rgba(255, 130, 103, 0.7), rgba(125, 37, 22, 0.3));
+  border-color: rgba(255, 130, 103, 0.55);
+}
+
+.window-button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.window-fallback {
+  display: none;
+  place-items: center;
+  min-height: 100vh;
+  padding: 24px;
+  text-align: center;
+}
+
+.window-fallback-text {
+  margin: 0;
+  color: var(--text-soft);
+  font: 700 clamp(1.2rem, 3vw, 2rem)/1.5 var(--mono);
 }
 
 .terminal-window {
@@ -261,9 +297,12 @@ a:visited {
 
 .hero-logo {
   margin: 0 0 18px;
+  display: block;
+  width: 100%;
   overflow-x: auto;
   color: var(--accent);
   font: 700 clamp(0.32rem, 0.72vw, 0.68rem)/1 var(--mono);
+  text-align: center;
   text-shadow: 0 0 18px rgba(255, 157, 46, 0.16);
 }
 
@@ -511,7 +550,7 @@ a:visited {
     grid-template-columns: 1fr;
   }
 
-  .signal-cluster span {
+  .window-button {
     width: 9px;
     height: 9px;
   }

@@ -10,6 +10,9 @@
 </head>
 <body>
   <div class="viewport-grid" aria-hidden="true"></div>
+  <section class="window-fallback" id="window-fallback" hidden>
+    <p class="window-fallback-text" id="window-fallback-text">there's nothing here yet. Maybe try looking <a href="https://blog.excrementgaming.com">here</a></p>
+  </section>
   <aside class="blog-toast" id="blog-toast" aria-live="polite" hidden>
     <div class="blog-toast-head">
       <span class="blog-toast-label">new blog entry</span>
@@ -26,7 +29,7 @@
   <div id="page-shell">
     <header class="chrome-bar">
       <div class="chrome-meta">
-        <span class="clock-pill">◷ <span id="clock">--:--:--</span> <span class="tz">(Europe/Zurich)</span></span>
+        <span class="clock-pill">◷ <span id="clock">--:--:--</span> <span class="tz" id="clock-zone">(local time)</span></span>
         <span class="crumbs">
           <a href="#services">services</a>
           <span>→</span>
@@ -35,10 +38,10 @@
           <a href="#links">links</a>
         </span>
       </div>
-      <div class="signal-cluster" aria-hidden="true">
-        <span></span>
-        <span></span>
-        <span></span>
+      <div class="signal-cluster">
+        <button class="window-button is-minimize" type="button" aria-label="Minimize window" data-window-action="minimize"></button>
+        <button class="window-button is-maximize" type="button" aria-label="Maximize window" disabled></button>
+        <button class="window-button is-close" type="button" aria-label="Close window" data-window-action="close"></button>
       </div>
     </header>
 
@@ -107,11 +110,35 @@
     document.getElementById('year').textContent = new Date().getFullYear();
 
     (function () {
+      var fallback = document.getElementById('window-fallback');
+      var fallbackText = document.getElementById('window-fallback-text');
+      var windowActions = document.querySelectorAll('[data-window-action]');
+      var fallbackMessages = {
+        minimize: 'window minimized. There\'s nothing here yet. Maybe try looking <a href="https://blog.excrementgaming.com">here</a>',
+        close: 'window closed. There\'s nothing here yet. Maybe try looking <a href="#services">here</a>'
+      };
+
+      windowActions.forEach(function (button) {
+        button.addEventListener('click', function () {
+          var action = button.getAttribute('data-window-action') || 'close';
+          if (fallbackText && fallbackMessages[action]) {
+            fallbackText.innerHTML = fallbackMessages[action];
+          }
+          document.body.classList.add('window-dismissed');
+          if (fallback) fallback.hidden = false;
+        });
+      });
+    })();
+
+    (function () {
       var clock = document.getElementById('clock');
-      if (!clock) return;
+      var zone = document.getElementById('clock-zone');
+      if (!clock || !zone) return;
+
+      var resolvedZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Local';
+      zone.textContent = '(' + resolvedZone.replace(/_/g, ' ') + ')';
 
       var formatter = new Intl.DateTimeFormat('en-GB', {
-        timeZone: 'Europe/Zurich',
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
