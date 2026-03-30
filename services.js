@@ -7,11 +7,7 @@
     projects: 'Projects'
   };
 
-  fetch('hosts.json')
-    .then(function (res) {
-      if (!res.ok) throw new Error('Failed to load');
-      return res.json();
-    })
+  loadEntries()
     .then(function (entries) {
       if (!entries.length) {
         list.innerHTML = '<p class="muted">No hosts configured.</p>';
@@ -83,6 +79,19 @@
     .catch(function () {
       list.innerHTML = '<p class="muted">Could not load services.</p>';
     });
+
+  function loadEntries() {
+    return fetchJson('hosts.json').catch(function () {
+      return fetchJson('services.json');
+    });
+  }
+
+  function fetchJson(path) {
+    return fetch(path, { cache: 'no-store' }).then(function (res) {
+      if (!res.ok) throw new Error('Failed to load ' + path);
+      return res.json();
+    });
+  }
 
   function esc(str) {
     return String(str)
