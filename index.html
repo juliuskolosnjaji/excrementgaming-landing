@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>excrementgaming.com</title>
+  <meta name="description" content="Self-hosted tools and infrastructure." />
+  <meta name="robots" content="index, follow" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="wrap">
+    <header>
+      <h1><a href="/">excrementgaming.com</a></h1>
+      <p class="tagline">self-hosted. self-reliant.</p>
+      <nav>
+        <a href="#about">about</a> &middot;
+        <a href="#services">services</a> &middot;
+        <a href="#links">links</a> &middot;
+        <a href="https://blog.excrementgaming.com">blog</a>
+      </nav>
+      <hr />
+    </header>
+
+    <section id="about">
+      <h2>About</h2>
+      <p>
+        Personal server infrastructure and self-hosted tools.
+        Running on Proxmox, tunneled through Cloudflare.
+        Built for personal use and shared where useful.
+      </p>
+      <p>No tracking. No ads. No nonsense.</p>
+    </section>
+
+    <hr />
+
+    <section id="services">
+      <h2>Services</h2>
+      <p class="muted">Tools currently running on this server.</p>
+      <div id="services-list">
+        <p class="muted">Loading&hellip;</p>
+      </div>
+    </section>
+
+    <hr />
+
+    <section id="links">
+      <h2>Links</h2>
+      <p class="muted">Social links coming soon.</p>
+    </section>
+
+    <hr />
+
+    <footer>
+      <p>
+        &copy; <span id="year"></span> excrementgaming.com
+        &mdash;
+        <a href="https://blog.excrementgaming.com">blog</a>
+      </p>
+    </footer>
+  </div>
+
+  <script src="services.js"></script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

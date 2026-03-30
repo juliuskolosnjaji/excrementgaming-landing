@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Pastebin",
+    "description": "Share code and text snippets. Syntax highlighted, no account needed.",
+    "url": "https://bin.excrementgaming.com",
+    "status": "online"
+  },
+  {
+    "name": "YouTube Downloader",
+    "description": "Download YouTube videos as MP4 or extract MP3 audio.",
+    "url": "https://ytdownload.excrementgaming.com",
+    "status": "online"
+  }
+]
