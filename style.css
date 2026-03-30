@@ -46,6 +46,11 @@ body.window-dismissed .window-fallback {
   display: grid;
 }
 
+body.window-dismissed::before,
+body.window-dismissed .viewport-grid {
+  display: none;
+}
+
 .blog-toast {
   position: fixed;
   right: 22px;
@@ -249,9 +254,13 @@ a:visited {
 
 .window-fallback {
   display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
   place-items: center;
   min-height: 100vh;
   padding: 24px;
+  background: #050505;
   text-align: center;
 }
 

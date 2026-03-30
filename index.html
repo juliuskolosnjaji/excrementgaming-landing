@@ -11,7 +11,7 @@
 <body>
   <div class="viewport-grid" aria-hidden="true"></div>
   <section class="window-fallback" id="window-fallback" hidden>
-    <p class="window-fallback-text" id="window-fallback-text">there's nothing here yet. Maybe try looking <a href="https://blog.excrementgaming.com">here</a></p>
+    <p class="window-fallback-text" id="window-fallback-text">There's nothing here yet. Maybe try looking <a href="https://blog.excrementgaming.com">here</a></p>
   </section>
   <aside class="blog-toast" id="blog-toast" aria-live="polite" hidden>
     <div class="blog-toast-head">
@@ -113,16 +113,12 @@
       var fallback = document.getElementById('window-fallback');
       var fallbackText = document.getElementById('window-fallback-text');
       var windowActions = document.querySelectorAll('[data-window-action]');
-      var fallbackMessages = {
-        minimize: 'window minimized. There\'s nothing here yet. Maybe try looking <a href="https://blog.excrementgaming.com">here</a>',
-        close: 'window closed. There\'s nothing here yet. Maybe try looking <a href="#services">here</a>'
-      };
+      var fallbackMessage = 'There\'s nothing here yet. Maybe try looking <a href="https://blog.excrementgaming.com">here</a>';
 
       windowActions.forEach(function (button) {
         button.addEventListener('click', function () {
-          var action = button.getAttribute('data-window-action') || 'close';
-          if (fallbackText && fallbackMessages[action]) {
-            fallbackText.innerHTML = fallbackMessages[action];
+          if (fallbackText) {
+            fallbackText.innerHTML = fallbackMessage;
           }
           document.body.classList.add('window-dismissed');
           if (fallback) fallback.hidden = false;
