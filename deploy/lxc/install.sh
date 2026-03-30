@@ -56,8 +56,13 @@ EOF
 
 next_id() {
   local id=100
-  while pct status "$id" &>/dev/null 2>&1; do id=$((id + 1)); done
+  while id_in_use "$id"; do id=$((id + 1)); done
   echo "$id"
+}
+
+id_in_use() {
+  local id="$1"
+  pct status "$id" &>/dev/null 2>&1 || qm status "$id" &>/dev/null 2>&1
 }
 
 first_storage_for_content() {
@@ -250,7 +255,7 @@ if [[ "$SETTINGS" == "advanced" ]]; then
   CT_ID=$(whiptail --backtitle "excrementgaming Landing" --title "Container ID" \
     --inputbox "\nEnter container ID:" 9 50 "$DEFAULT_CTID" 3>&1 1>&2 2>&3) || exit 0
   CT_ID="${CT_ID:-$DEFAULT_CTID}"
-  pct status "$CT_ID" &>/dev/null && { msg_error "CT${CT_ID} already exists."; exit 1; }
+  id_in_use "$CT_ID" && { msg_error "ID ${CT_ID} is already in use by an existing VM or container."; exit 1; }
 
   CT_HOSTNAME=$(whiptail --backtitle "excrementgaming Landing" --title "Hostname" \
     --inputbox "\nEnter hostname:" 9 50 "$NSAPP" 3>&1 1>&2 2>&3) || exit 0
