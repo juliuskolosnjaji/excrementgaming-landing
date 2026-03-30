@@ -16,23 +16,29 @@
       list.innerHTML = '';
 
       services.forEach(function (svc) {
-        var item = document.createElement('div');
+        var item = document.createElement('article');
         item.className = 'service-item';
 
         var hostname = '';
-        try { hostname = new URL(svc.url).hostname; } catch (e) { hostname = svc.url; }
+        try {
+          hostname = new URL(svc.url).hostname;
+        } catch (e) {
+          hostname = svc.url;
+        }
 
         var status = svc.status === 'online' ? 'online' : 'offline';
+        var statusLabel = status === 'online' ? 'online' : 'offline';
 
         item.innerHTML =
           '<div class="service-info">' +
-            '<span class="service-status ' + status + '" title="' + status + '"></span>' +
-            '<span class="service-name">' + esc(svc.name) + '</span>' +
-            '<span class="service-sep"> &mdash; </span>' +
-            '<span class="service-desc">' + esc(svc.description) + '</span>' +
+            '<div class="service-meta">' +
+              '<span class="service-status ' + status + '">' + statusLabel + '</span>' +
+              '<span class="service-name">' + esc(svc.name) + '</span>' +
+            '</div>' +
+            '<p class="service-desc">' + esc(svc.description) + '</p>' +
           '</div>' +
           '<a class="service-link" href="' + esc(svc.url) + '" target="_blank" rel="noopener noreferrer">' +
-            esc(hostname) + ' &nearr;' +
+            esc(hostname) + ' ->' +
           '</a>';
 
         list.appendChild(item);

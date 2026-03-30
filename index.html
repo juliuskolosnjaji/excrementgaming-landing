@@ -4,63 +4,188 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>excrementgaming.com</title>
-  <meta name="description" content="Self-hosted tools and infrastructure." />
+  <meta name="description" content="Self-hosted tools, infrastructure, and weird web experiments." />
   <meta name="robots" content="index, follow" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="wrap">
-    <header>
-      <h1><a href="/">excrementgaming.com</a></h1>
-      <p class="tagline">self-hosted. self-reliant.</p>
-      <nav>
-        <a href="#about">about</a> &middot;
-        <a href="#services">services</a> &middot;
-        <a href="#links">links</a> &middot;
-        <a href="https://blog.excrementgaming.com">blog</a>
-      </nav>
-      <hr />
+  <div class="viewport-grid" aria-hidden="true"></div>
+
+  <div id="page-shell">
+    <header class="chrome-bar">
+      <div class="chrome-meta">
+        <span class="clock-pill">◷ <span id="clock">--:--:--</span> <span class="tz">(Europe/Zurich)</span></span>
+        <span class="crumbs">
+          <a href="#services">services</a>
+          <span>→</span>
+          <a href="https://blog.excrementgaming.com">blog</a>
+          <span>→</span>
+          <a href="#links">links</a>
+        </span>
+      </div>
+      <button class="close-button" type="button" aria-label="Decorative window close button">×</button>
     </header>
 
-    <section id="about">
-      <h2>About</h2>
-      <p>
-        Personal server infrastructure and self-hosted tools.
-        Running on Proxmox, tunneled through Cloudflare.
-        Built for personal use and shared where useful.
-      </p>
-      <p>No tracking. No ads. No nonsense.</p>
-    </section>
+    <main class="terminal-window">
+      <section class="hero-shell">
+        <div class="prompt-line">
+          <span class="prompt-user">visitor@excrementgaming</span>
+          <span class="prompt-sep">:</span>
+          <span class="prompt-path">~</span>
+          <span class="prompt-sep">$</span>
+          <span class="prompt-command">./launch-main-site --mode self-hosted</span>
+        </div>
 
-    <hr />
+        <pre class="hero-logo" aria-label="excrementgaming logo">
+███████╗██╗  ██╗ ██████╗██████╗ ███████╗███╗   ███╗███████╗███╗   ██╗████████╗
+██╔════╝╚██╗██╔╝██╔════╝██╔══██╗██╔════╝████╗ ████║██╔════╝████╗  ██║╚══██╔══╝
+█████╗   ╚███╔╝ ██║     ██████╔╝█████╗  ██╔████╔██║█████╗  ██╔██╗ ██║   ██║
+██╔══╝   ██╔██╗ ██║     ██╔══██╗██╔══╝  ██║╚██╔╝██║██╔══╝  ██║╚██╗██║   ██║
+███████╗██╔╝ ██╗╚██████╗██║  ██║███████╗██║ ╚═╝ ██║███████╗██║ ╚████║   ██║
+╚══════╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═══╝   ╚═╝
+        </pre>
 
-    <section id="services">
-      <h2>Services</h2>
-      <p class="muted">Tools currently running on this server.</p>
-      <div id="services-list">
-        <p class="muted">Loading&hellip;</p>
-      </div>
-    </section>
+        <div class="hero-grid">
+          <section class="card intro-card" id="about">
+            <div class="card-title">readme.txt</div>
+            <p>
+              Self-hosted tools, personal infrastructure, and internet side-projects running on a small stack
+              built around Proxmox, containers, and a refusal to leave everything in somebody else’s cloud.
+            </p>
+            <p>
+              This page is the front desk. The blog is where the logs, experiments, and breakdowns live.
+            </p>
+          </section>
 
-    <hr />
+          <section class="card status-card">
+            <div class="card-title">node_status.sh</div>
+            <ul class="status-list">
+              <li><span>stack</span><strong>proxmox / lxc / nginx</strong></li>
+              <li><span>routing</span><strong>cloudflare tunnel</strong></li>
+              <li><span>policy</span><strong>no ads / no tracking</strong></li>
+              <li><span>blog</span><a href="https://blog.excrementgaming.com">blog.excrementgaming.com</a></li>
+            </ul>
+          </section>
+        </div>
+      </section>
 
-    <section id="links">
-      <h2>Links</h2>
-      <p class="muted">Social links coming soon.</p>
-    </section>
+      <section class="desktop-strip" aria-label="Quick navigation">
+        <a class="desktop-chip is-active" href="/">main-site.exe</a>
+        <a class="desktop-chip" href="https://blog.excrementgaming.com">blog.exe</a>
+        <a class="desktop-chip" href="#services">services.log</a>
+        <a class="desktop-chip" href="#links">links.cfg</a>
+      </section>
 
-    <hr />
+      <section class="window-section" id="services">
+        <div class="section-head">
+          <span class="prompt-user">visitor@excrementgaming</span>
+          <span class="prompt-sep">:</span>
+          <span class="prompt-path">~/services</span>
+          <span class="prompt-sep">$</span>
+          <span class="prompt-command">ls -lt public/</span>
+        </div>
 
-    <footer>
-      <p>
-        &copy; <span id="year"></span> excrementgaming.com
-        &mdash;
+        <div class="section-grid">
+          <div class="card services-shell">
+            <div class="card-title">services.json</div>
+            <p class="muted">Public tools currently exposed from the server.</p>
+            <div id="services-list">
+              <p class="muted">Loading…</p>
+            </div>
+          </div>
+
+          <aside class="card side-shell">
+            <div class="card-title">notes.sys</div>
+            <div class="note-box">
+              <strong>What this is:</strong>
+              <p>Small, useful tools that are actually used, not filler apps deployed just to look busy.</p>
+            </div>
+            <div class="note-box">
+              <strong>Main companion page:</strong>
+              <p><a href="https://blog.excrementgaming.com">Open the blog</a> for writeups, setup notes, and experiments.</p>
+            </div>
+            <div class="note-box accent-box">
+              <strong>Operating principle:</strong>
+              <p>Own the stack, understand the stack, document the stack.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="window-section split-layout">
+        <div>
+          <div class="section-head">
+            <span class="prompt-user">visitor@excrementgaming</span>
+            <span class="prompt-sep">:</span>
+            <span class="prompt-path">~/about</span>
+            <span class="prompt-sep">$</span>
+            <span class="prompt-command">cat principles.md</span>
+          </div>
+
+          <div class="card prose-card">
+            <p>
+              excrementgaming.com is meant to feel personal and operational at the same time: a place where
+              services are live, the design has a point of view, and the infrastructure behind it is part of the story.
+            </p>
+            <p>
+              The look intentionally leans into terminal windows, desktop chrome, and old-web personality,
+              but it still behaves like a modern landing page.
+            </p>
+          </div>
+        </div>
+
+        <div id="links">
+          <div class="section-head">
+            <span class="prompt-user">visitor@excrementgaming</span>
+            <span class="prompt-sep">:</span>
+            <span class="prompt-path">~/links</span>
+            <span class="prompt-sep">$</span>
+            <span class="prompt-command">open destinations.list</span>
+          </div>
+
+          <div class="card links-card">
+            <a class="link-row" href="https://blog.excrementgaming.com">
+              <span>blog.excrementgaming.com</span>
+              <strong>notes, posts, logs →</strong>
+            </a>
+            <a class="link-row" href="#services">
+              <span>services</span>
+              <strong>currently running tools →</strong>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <footer class="site-footer">
+        <span>&copy; <span id="year"></span> excrementgaming.com</span>
         <a href="https://blog.excrementgaming.com">blog</a>
-      </p>
-    </footer>
+      </footer>
+    </main>
   </div>
 
   <script src="services.js"></script>
-  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    (function () {
+      var clock = document.getElementById('clock');
+      if (!clock) return;
+
+      var formatter = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Europe/Zurich',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      });
+
+      function updateClock() {
+        clock.textContent = formatter.format(new Date());
+      }
+
+      updateClock();
+      setInterval(updateClock, 1000);
+    })();
+  </script>
 </body>
 </html>
