@@ -6,7 +6,7 @@
   <title>excrementgaming.com</title>
   <meta name="description" content="Self-hosted tools, infrastructure, and weird web experiments." />
   <meta name="robots" content="index, follow" />
-  <link rel="stylesheet" href="style.css?v=20260330b" />
+  <link rel="stylesheet" href="style.css?v=20260330c" />
 </head>
 <body>
   <div class="viewport-grid" aria-hidden="true"></div>
@@ -105,13 +105,16 @@
     </main>
   </div>
 
-  <script src="services.js?v=20260330b"></script>
+  <script src="services.js?v=20260330c"></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
     (function () {
       var fallback = document.getElementById('window-fallback');
       var fallbackText = document.getElementById('window-fallback-text');
+      var pageShell = document.getElementById('page-shell');
+      var toast = document.getElementById('blog-toast');
+      var viewportGrid = document.querySelector('.viewport-grid');
       var windowActions = document.querySelectorAll('[data-window-action]');
       var fallbackMessage = 'There\'s nothing here yet. Maybe try looking <a href="https://blog.excrementgaming.com">here</a>';
 
@@ -121,6 +124,9 @@
             fallbackText.innerHTML = fallbackMessage;
           }
           document.body.classList.add('window-dismissed');
+          if (pageShell) pageShell.hidden = true;
+          if (toast) toast.hidden = true;
+          if (viewportGrid) viewportGrid.hidden = true;
           if (fallback) fallback.hidden = false;
         });
       });
