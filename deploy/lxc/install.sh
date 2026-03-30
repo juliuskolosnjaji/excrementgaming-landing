@@ -207,6 +207,7 @@ if [[ "$ACTION" == "1" ]]; then
     git reset --hard origin/main --quiet
     AFTER=\$(git rev-parse HEAD)
     rsync -a --delete --exclude='.git' /opt/excrementgaming-landing/ $WEB_ROOT/
+    cp /opt/excrementgaming-landing/nginx.conf /etc/nginx/sites-available/excrementgaming
     nginx -t 2>/dev/null && systemctl reload nginx
     echo \"\${BEFORE:0:7} \${AFTER:0:7}\"
   " > /tmp/excg_update_out 2>&1 || true

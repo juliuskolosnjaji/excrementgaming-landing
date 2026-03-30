@@ -3,18 +3,18 @@
   if (!list) return;
 
   var SECTION_TITLES = {
-    projects: 'Projects',
-    services: 'Services'
+    services: 'Services',
+    projects: 'Projects'
   };
 
-  fetch('services.json')
+  fetch('hosts.json')
     .then(function (res) {
       if (!res.ok) throw new Error('Failed to load');
       return res.json();
     })
     .then(function (entries) {
       if (!entries.length) {
-        list.innerHTML = '<p class="muted">No services configured.</p>';
+        list.innerHTML = '<p class="muted">No hosts configured.</p>';
         return;
       }
 
@@ -30,7 +30,7 @@
       var grid = document.createElement('div');
       grid.className = 'host-grid';
 
-      ['projects', 'services'].forEach(function (groupKey) {
+      ['services', 'projects'].forEach(function (groupKey) {
         var groupEntries = grouped[groupKey];
         if (!groupEntries || !groupEntries.length) return;
 

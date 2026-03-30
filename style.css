@@ -37,6 +37,87 @@ body {
   position: relative;
 }
 
+.blog-toast {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 20;
+  width: min(360px, calc(100vw - 24px));
+  padding: 12px;
+  border: 1px solid rgba(255, 191, 105, 0.34);
+  background:
+    linear-gradient(180deg, rgba(255, 157, 46, 0.06), transparent),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent),
+    rgba(13, 10, 8, 0.97);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 22px 42px rgba(0, 0, 0, 0.58);
+}
+
+.blog-toast-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.blog-toast-label {
+  color: var(--accent);
+  font: 700 0.78rem/1.2 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.blog-toast-close {
+  border: 1px solid rgba(255, 191, 105, 0.3);
+  background: rgba(255, 157, 46, 0.08);
+  color: var(--text-soft);
+  font: inherit;
+  line-height: 1;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+}
+
+.blog-toast-close:hover {
+  color: var(--text);
+  border-color: rgba(255, 191, 105, 0.5);
+}
+
+.blog-toast-body {
+  margin-bottom: 14px;
+}
+
+.blog-toast-meta,
+.blog-toast-desc {
+  margin: 0;
+  color: var(--text-soft);
+}
+
+.blog-toast-meta {
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.blog-toast-title {
+  margin: 0 0 10px;
+  color: var(--text);
+  font: 700 1.15rem/1.25 var(--mono);
+}
+
+.blog-toast-link {
+  display: inline-flex;
+  align-items: center;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.blog-toast-link:hover {
+  text-decoration: underline;
+}
+
 body::before {
   content: '';
   position: fixed;
@@ -413,6 +494,12 @@ a:visited {
 
   .hero-logo {
     font-size: 0.26rem;
+  }
+
+  .blog-toast {
+    right: 8px;
+    bottom: 8px;
+    width: min(100vw - 16px, 360px);
   }
 
   .service-item,

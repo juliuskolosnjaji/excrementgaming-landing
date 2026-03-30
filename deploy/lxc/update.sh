@@ -39,6 +39,9 @@ info "Syncing files to web root..."
 rsync -a --delete --exclude='.git' "$REPO_DIR/" "$WEB_ROOT/"
 chown -R www-data:www-data "$WEB_ROOT"
 
+info "Refreshing nginx config..."
+cp "$REPO_DIR/nginx.conf" /etc/nginx/sites-available/excrementgaming
+
 info "Reloading nginx..."
 nginx -t 2>/dev/null && systemctl reload nginx
 

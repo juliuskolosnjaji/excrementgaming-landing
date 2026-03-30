@@ -10,6 +10,18 @@
 </head>
 <body>
   <div class="viewport-grid" aria-hidden="true"></div>
+  <aside class="blog-toast" id="blog-toast" aria-live="polite" hidden>
+    <div class="blog-toast-head">
+      <span class="blog-toast-label">new blog entry</span>
+      <button class="blog-toast-close" id="blog-toast-close" type="button" aria-label="Dismiss notification">×</button>
+    </div>
+    <div class="blog-toast-body">
+      <p class="blog-toast-meta" id="blog-toast-meta">Fetching latest post…</p>
+      <h2 class="blog-toast-title" id="blog-toast-title">Blog feed loading</h2>
+      <p class="blog-toast-desc" id="blog-toast-desc">Pulling the newest entry from the blog feed.</p>
+    </div>
+    <a class="blog-toast-link" id="blog-toast-link" href="https://blog.excrementgaming.com">Open blog →</a>
+  </aside>
 
   <div id="page-shell">
     <header class="chrome-bar">
@@ -63,13 +75,6 @@
         </div>
       </section>
 
-      <section class="desktop-strip" aria-label="Quick navigation">
-        <a class="desktop-chip is-active" href="/">website</a>
-        <a class="desktop-chip" href="https://blog.excrementgaming.com">blog</a>
-        <a class="desktop-chip" href="#services">services</a>
-        <a class="desktop-chip" href="#links">links</a>
-      </section>
-
       <section class="window-section" id="services">
         <div class="section-head">
           <span class="prompt-user">visitor@excrementgaming</span>
@@ -81,7 +86,7 @@
 
         <div class="section-grid">
           <div class="card services-shell">
-            <div class="card-title">hosted.json</div>
+            <div class="card-title">hosts.json</div>
             <p class="muted">Public-facing things currently running from this stack.</p>
             <div id="services-list">
               <p class="muted">Loading…</p>
@@ -119,6 +124,69 @@
 
       updateClock();
       setInterval(updateClock, 1000);
+    })();
+
+    (function () {
+      var toast = document.getElementById('blog-toast');
+      var closeButton = document.getElementById('blog-toast-close');
+      var meta = document.getElementById('blog-toast-meta');
+      var title = document.getElementById('blog-toast-title');
+      var desc = document.getElementById('blog-toast-desc');
+      var link = document.getElementById('blog-toast-link');
+      if (!toast || !meta || !title || !desc || !link) return;
+
+      if (closeButton) {
+        closeButton.addEventListener('click', function () {
+          toast.hidden = true;
+        });
+      }
+
+      fetch('/blog-feed.xml', { cache: 'no-store' })
+        .then(function (res) {
+          if (!res.ok) throw new Error('Feed unavailable');
+          return res.text();
+        })
+        .then(function (xmlText) {
+          var parser = new DOMParser();
+          var doc = parser.parseFromString(xmlText, 'application/xml');
+          var item = doc.querySelector('item');
+          if (!item) throw new Error('No posts found');
+
+          var itemTitle = item.querySelector('title');
+          var itemLink = item.querySelector('link');
+          var itemDate = item.querySelector('pubDate');
+          var itemDescription = item.querySelector('description');
+
+          var rawTitle = itemTitle ? itemTitle.textContent.trim() : 'Newest post';
+          var rawLink = itemLink ? itemLink.textContent.trim() : 'https://blog.excrementgaming.com';
+          var rawDescription = itemDescription ? itemDescription.textContent.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() : 'Fresh notes just landed on the blog.';
+          var formattedDate = 'Just published';
+
+          if (itemDate && itemDate.textContent.trim()) {
+            var parsedDate = new Date(itemDate.textContent.trim());
+            if (!Number.isNaN(parsedDate.getTime())) {
+              formattedDate = new Intl.DateTimeFormat('en-GB', {
+                timeZone: 'Europe/Zurich',
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+              }).format(parsedDate);
+            }
+          }
+
+          meta.textContent = 'Newest post · ' + formattedDate;
+          title.textContent = rawTitle;
+          desc.textContent = rawDescription.slice(0, 140) + (rawDescription.length > 140 ? '…' : '');
+          link.href = rawLink;
+          toast.hidden = false;
+        })
+        .catch(function () {
+          meta.textContent = 'Blog online';
+          title.textContent = 'Read the latest blog posts';
+          desc.textContent = 'The feed could not be loaded right now, but the archive is still a click away.';
+          link.href = 'https://blog.excrementgaming.com';
+          toast.hidden = false;
+        });
     })();
   </script>
 </body>
