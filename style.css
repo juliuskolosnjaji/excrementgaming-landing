@@ -182,7 +182,7 @@ a:visited {
   margin: 0 0 18px;
   overflow-x: auto;
   color: var(--accent);
-  font: 700 clamp(0.44rem, 1vw, 0.88rem)/1 var(--mono);
+  font: 700 clamp(0.32rem, 0.72vw, 0.68rem)/1 var(--mono);
   text-shadow: 0 0 18px rgba(255, 157, 46, 0.16);
 }
 
@@ -427,7 +427,7 @@ a:visited {
   }
 
   .hero-logo {
-    font-size: 0.34rem;
+    font-size: 0.26rem;
   }
 
   .service-item,
