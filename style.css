@@ -204,24 +204,6 @@ a:visited {
   width: 100%;
 }
 
-.hero-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.meta-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 10px 14px;
-  border: 1px solid rgba(255, 191, 105, 0.24);
-  background:
-    linear-gradient(180deg, rgba(255, 157, 46, 0.06), transparent),
-    linear-gradient(180deg, #17120d, #0d0b09);
-  color: var(--text-soft);
-  text-decoration: none;
-}
-
 .card,
 .note-box,
 .service-item,
@@ -291,6 +273,12 @@ a:visited {
   margin-top: 16px;
 }
 
+.host-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
 .host-group {
   display: grid;
   gap: 14px;
@@ -302,6 +290,11 @@ a:visited {
   font: 700 1rem/1.2 var(--mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.host-table {
+  display: grid;
+  gap: 14px;
 }
 
 .service-item {
@@ -371,28 +364,6 @@ a:visited {
   color: #d3654d;
 }
 
-.links-card {
-  display: grid;
-  gap: 12px;
-}
-
-.link-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 14px 16px;
-  text-decoration: none;
-}
-
-.link-row span {
-  color: var(--text);
-}
-
-.link-row strong {
-  color: var(--accent);
-  font-size: 0.95rem;
-}
-
 .site-footer {
   display: flex;
   justify-content: space-between;
@@ -419,7 +390,8 @@ a:visited {
 
 @media (max-width: 1100px) {
   .hero-grid,
-  .section-grid {
+  .section-grid,
+  .host-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -444,7 +416,7 @@ a:visited {
   }
 
   .service-item,
-  .link-row {
+  .host-grid {
     grid-template-columns: 1fr;
   }
 

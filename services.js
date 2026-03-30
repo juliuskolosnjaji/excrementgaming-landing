@@ -27,6 +27,9 @@
         return acc;
       }, {});
 
+      var grid = document.createElement('div');
+      grid.className = 'host-grid';
+
       ['projects', 'services'].forEach(function (groupKey) {
         var groupEntries = grouped[groupKey];
         if (!groupEntries || !groupEntries.length) return;
@@ -38,6 +41,9 @@
         title.className = 'host-group-title';
         title.textContent = SECTION_TITLES[groupKey];
         section.appendChild(title);
+
+        var table = document.createElement('div');
+        table.className = 'host-table';
 
         groupEntries.forEach(function (svc) {
           var item = document.createElement('article');
@@ -65,11 +71,14 @@
               esc(hostname) + ' ->' +
             '</a>';
 
-          section.appendChild(item);
+          table.appendChild(item);
         });
 
-        list.appendChild(section);
+        section.appendChild(table);
+        grid.appendChild(section);
       });
+
+      list.appendChild(grid);
     })
     .catch(function () {
       list.innerHTML = '<p class="muted">Could not load services.</p>';
