@@ -2,35 +2,35 @@
   {
     "category": "services",
     "name": "Pastebin",
-    "description": "Share code and text snippets. Syntax highlighted, no account needed.",
+    "description": "Code and text snippets.",
     "url": "https://bin.excrementgaming.com",
     "status": "online"
   },
   {
     "category": "services",
     "name": "YouTube Downloader",
-    "description": "Download YouTube videos as MP4 or extract MP3 audio.",
+    "description": "Download MP4 video or MP3 audio.",
     "url": "https://ytdownload.excrementgaming.com",
     "status": "online"
   },
   {
     "category": "services",
     "name": "Scramjet",
-    "description": "Web proxy service available at scramjet.excrementgaming.com.",
+    "description": "Web proxy service.",
     "url": "https://scramjet.excrementgaming.com",
     "status": "online"
   },
   {
     "category": "projects",
     "name": "Railtrax",
-    "description": "Railway-focused site for railtrax.eu.",
+    "description": "Railway-focused site.",
     "url": "https://railtrax.eu",
     "status": "online"
   },
   {
     "category": "projects",
     "name": "Wassertracker",
-    "description": "Hydration tracking site for wassertracker.xyz.",
+    "description": "Hydration tracking site.",
     "url": "https://wassertracker.xyz",
     "status": "online"
   }
